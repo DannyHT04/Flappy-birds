@@ -11,11 +11,15 @@ public class FlyBehavior : MonoBehaviour
     [SerializeField] private float _rotationSpeed = 10f;
     // declare as rigidbody 
     private Rigidbody2D _rb;
+    [SerializeField] private AudioSource _flap;
+    [SerializeField] private AudioSource _death;
 
+    
     private void Start()
     {
         // init rigidbody by getting the component that is attach to this script
         _rb = GetComponent<Rigidbody2D>();
+        
     }
 
     private void Update()
@@ -25,6 +29,11 @@ public class FlyBehavior : MonoBehaviour
         {
             // sets the vertical velocity of the Rigidbody2D to move the GameObject upwards at a specified speed.
             _rb.velocity = Vector2.up * _velocity;
+            if(Time.timeScale != 0)
+            {
+            _flap.Play();
+
+            }
         }
     }
 
@@ -33,5 +42,11 @@ public class FlyBehavior : MonoBehaviour
         //controls how sensitive the rotation is to changes in vertical velocity.
         // Every frame, the GameObject's rotation is updated based on its current vertical velocity.
         transform.rotation = Quaternion.Euler(0, 0, _rb.velocity.y * _rotationSpeed);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        _death.Play();
+        GameManager.instance.GameOver();
     }
 }
